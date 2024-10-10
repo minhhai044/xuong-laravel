@@ -1,9 +1,11 @@
 <?php
 
 use App\Events\PodcastProcessed;
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\SessionController;
+use App\Http\Controllers\StudentController;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -182,3 +184,5 @@ Route::post('capnhat',[SessionController::class,'capnhat'])->name('session.capnh
 Route::get('confirm',[SessionController::class,'confirm'])->name('session.confirm');
 Route::post( 'thanhcong',[SessionController::class,'thanhcong'])->name('session.thanhcong');
 
+
+Route::resource('students',StudentController::class);  

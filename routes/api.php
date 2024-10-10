@@ -1,6 +1,10 @@
 <?php
 
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ClassroomController;
 use App\Http\Controllers\Api\ProjectController;
+use App\Http\Controllers\Api\StudentController;
+use App\Http\Controllers\Api\SubjectController;
 use App\Http\Controllers\Api\TaskController;
 use App\Models\Project;
 use Illuminate\Http\Request;
@@ -20,6 +24,12 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+
+// register
+// logout
+// Route::post('users/{id}',[AuthController::class,'login']);
+
 Route::prefix('projects')->group(function () {
     Route::get('/', [ProjectController::class, 'index'])->name('projects.index');
     Route::post('/', [ProjectController::class, 'store'])->name('projects.store');
@@ -35,3 +45,14 @@ Route::prefix('projects')->group(function () {
         Route::put('{task}', [TaskController::class, 'update'])->name('tasks.update');
     });
 });
+
+
+
+
+
+
+
+Route::apiResource('classrooms',ClassroomController::class);
+Route::apiResource('subjects',SubjectController::class);
+Route::apiResource('students',StudentController::class);
+Route::apiResource('passports',StudentController::class);
