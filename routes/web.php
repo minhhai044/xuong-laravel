@@ -185,4 +185,6 @@ Route::get('confirm',[SessionController::class,'confirm'])->name('session.confir
 Route::post( 'thanhcong',[SessionController::class,'thanhcong'])->name('session.thanhcong');
 
 
-Route::resource('students',StudentController::class);  
+Route::resource('students',StudentController::class); 
+Route::post('search',[StudentController::class,'search'])->name('search');
+

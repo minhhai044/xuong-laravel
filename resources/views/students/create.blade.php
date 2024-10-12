@@ -3,15 +3,15 @@
 @section('content')
     <div class="container">
         @if ($errors->any())
-                    <div class="alert alert-danger">
-                        <ul>
-                            @foreach ($errors->all() as $item)
-                                <li>{{ $item }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
-        <form action="{{route('students.store')}}" method="POST">
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $item)
+                        <li>{{ $item }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+        <form action="{{ route('students.store') }}" method="POST">
             @csrf
             <div class="border p-5">
                 <div class="mb-3 row">
@@ -39,7 +39,7 @@
                 </div>
 
 
-                
+
             </div>
 
             <div class="border p-5">

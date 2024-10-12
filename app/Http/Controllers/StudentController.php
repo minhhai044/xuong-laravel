@@ -22,9 +22,20 @@ class StudentController extends Controller
 
             'classroom'
         )->latest('id')->paginate(3);
+
         return view('students.index', compact('dataStudent'));
     }
 
+    public function search(Request $request)
+    {
+        $key = $request->keyword;
+        $search = Student::with('classroom')
+        ->whereAny(['name'], 'LIKE', "%$key%")
+        ->orWhereHas('classroom', function ($query) use ($key) {
+            $query->where('name', 'LIKE', "%$key%");
+        })->get();
+        return view('students.search',compact('search'));
+    }
     /**
      * Show the form for creating a new resource.
      */
@@ -44,13 +55,11 @@ class StudentController extends Controller
             'student.classroom_id' => 'required',
             'student.name' => 'required',
             'student.email' => ['required', Rule::unique(Student::class, 'email')],
-        ]);
-        $request->validate([
+
             'passport.passport_number' => 'required',
             'passport.issued_date' => 'required',
             'passport.expiry_date' => 'required',
-        ]);
-        $request->validate([
+
             'subject' => 'required|array',
             'subject.*' => 'required|integer',
         ]);
@@ -60,9 +69,7 @@ class StudentController extends Controller
         try {
             DB::transaction(function () use ($dataStudent, $dataPassport, $datasubject) {
                 $data = Student::query()->create($dataStudent);
-
-                $dataPassport['student_id'] = $data->id;
-                $data->passport()->insert($dataPassport);
+                $data->passport()->create($dataPassport);
 
                 $data->subjects()->attach($datasubject);
             });
@@ -91,16 +98,16 @@ class StudentController extends Controller
      */
     public function edit(string $id)
     {
-        
+
         $dataStudent = Student::with(
             'passport',
             'classroom',
             'subjects'
         )->findOrFail($id);
         $classrooms = Classroom::query()->pluck('name', 'id');
-        $datasubjects = $dataStudent->subjects()->pluck( 'id')->all();
+        $datasubjects = $dataStudent->subjects()->pluck('id')->all();
         $supjects = Subject::query()->pluck('name', 'id');
-        return view('students.edit', compact('classrooms', 'supjects', 'dataStudent','datasubjects'));
+        return view('students.edit', compact('classrooms', 'supjects', 'dataStudent', 'datasubjects'));
     }
 
     /**
@@ -128,7 +135,7 @@ class StudentController extends Controller
                 $data = Student::find($id);
                 $data->update($dataStudent);
 
-                $data->passport()->where('student_id','=',$id)->update($dataPassport);
+                $data->passport()->where('student_id', '=', $id)->update($dataPassport);
 
                 $data->subjects()->sync($datasubject);
             });
@@ -145,7 +152,7 @@ class StudentController extends Controller
     public function destroy(string $id)
     {
         try {
-            DB::transaction(function () use ( $id) {
+            DB::transaction(function () use ($id) {
                 $dataStudent = Student::query()->findOrFail($id);
 
                 $dataStudent->subjects()->sync([]);
